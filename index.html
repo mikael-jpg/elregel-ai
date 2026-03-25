@@ -263,8 +263,19 @@ header{position:sticky;top:0;z-index:100;background:var(--primary);box-shadow:0 
 <script>
 const SB  = 'https://rnnjnnulqdgbwghaxbdg.supabase.co';
 const SBK = 'sb_publishable_XDrJVmDDC9g4rxTDYJABHA_lWV0q02D';
-const OAK = 'OPENAI_KEY_REMOVED';
-const CLK = 'ANTHROPIC_KEY_REMOVED';
+let OAK = '';
+
+// Ladda config från Supabase
+async function loadConfig() {
+  try {
+    const r = await fetch('https://rnnjnnulqdgbwghaxbdg.supabase.co/storage/v1/object/public/app/config.json');
+    const c = await r.json();
+    OAK = c.oai; CLK = c.clk;
+  } catch(e) { console.error('Config ej laddad:', e); }
+}
+loadConfig();
+
+let CLK = '';
 
 const USERS = {
   mikael:{name:'Mikael',pin:'0739150416',short:'Mikael',grad:'linear-gradient(135deg,#004f8c,#003865)',ltr:'M'},
