@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>ElregelAI</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary:#003865;--primary-l:#004f8c;--primary-xl:#006ab4;
+  --cyan:#0099cc;--cyan-l:#33b5e5;--yellow:#F5A623;--yellow-l:#f8c060;
+  --bg:#F4F6F9;--white:#ffffff;--text:#1a2940;--text-m:#5a7090;
+  --border:#ccd8e8;--sh:0 2px 8px rgba(0,56,101,.10);--sh-lg:0 8px 28px rgba(0,56,101,.14);
+  --A1:#dc2626;--A2:#ea580c;--B:#b45309;--C:#16a34a;--r:10px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+/* LOGIN */
+#ls{position:fixed;inset:0;z-index:999;background:var(--primary);background-image:linear-gradient(135deg,var(--primary) 0%,var(--primary-l) 60%,#005a9e 100%);display:flex;align-items:center;justify-content:center}
+.lb{background:var(--white);border-radius:20px;padding:36px 32px;width:100%;max-width:380px;margin:20px;box-shadow:0 24px 64px rgba(0,0,0,.28)}
+.ll{display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:6px}
+.ll-bolt{width:42px;height:42px;background:linear-gradient(135deg,var(--cyan),var(--primary-l));border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 4px 14px rgba(0,153,204,.35)}
+.ll-txt{font-size:23px;font-weight:800;color:var(--primary);letter-spacing:-.5px}
+.ll-txt span{color:var(--cyan)}
+.ls-sub{text-align:center;font-size:12px;color:var(--text-m);margin-bottom:24px;line-height:1.5}
+.user-grid{display:grid;gap:9px;margin-bottom:18px}
+.ub{padding:13px 15px;border:2px solid var(--border);border-radius:var(--r);background:var(--bg);cursor:pointer;display:flex;align-items:center;gap:11px;transition:all .18s;text-align:left}
+.ub:hover{border-color:var(--cyan);background:rgba(0,153,204,.05)}
+.ub.sel{border-color:var(--cyan);background:rgba(0,153,204,.07);box-shadow:0 0 0 3px rgba(0,153,204,.12)}
+.ua{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:var(--white);flex-shrink:0}
+.ui-name{font-size:14px;font-weight:600;color:var(--text)}
+.ui-role{font-size:11px;color:var(--text-m);margin-top:1px}
+.pin-lbl{font-size:11px;font-weight:600;color:var(--text-m);margin-bottom:5px;display:block;letter-spacing:.3px}
+.pin{width:100%;padding:12px 14px;border:2px solid var(--border);border-radius:var(--r);font-size:18px;font-family:'JetBrains Mono',monospace;outline:none;letter-spacing:6px;text-align:center;transition:border-color .18s;color:var(--text);margin-bottom:14px}
+.pin:focus{border-color:var(--cyan)}
+.pin::placeholder{letter-spacing:2px;font-size:14px}
+.lgn-btn{width:100%;padding:13px;background:linear-gradient(135deg,var(--cyan),var(--primary-l));color:var(--white);border:none;border-radius:var(--r);font-size:15px;font-weight:700;cursor:pointer;transition:all .18s;box-shadow:0 4px 14px rgba(0,79,140,.30);letter-spacing:.2px}
+.lgn-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,79,140,.40)}
+.lgn-err{color:var(--A1);font-size:12px;text-align:center;margin-top:8px;min-height:16px}
+
+/* HEADER */
+header{position:sticky;top:0;z-index:100;background:var(--primary);box-shadow:0 2px 10px rgba(0,0,0,.20)}
+.hdr{max-width:880px;margin:0 auto;padding:0 16px;display:flex;align-items:center;gap:12px;height:54px}
+.logo{display:flex;align-items:center;gap:8px;text-decoration:none}
+.logo-b{width:30px;height:30px;background:linear-gradient(135deg,var(--cyan-l),var(--cyan));border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:15px}
+.logo-t{font-size:16px;font-weight:800;color:var(--white);letter-spacing:-.3px}
+.logo-t span{color:var(--cyan-l)}
+.hdr-r{margin-left:auto;display:flex;align-items:center;gap:8px}
+.beta{background:rgba(245,166,35,.18);border:1px solid rgba(245,166,35,.35);color:var(--yellow-l);font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;letter-spacing:.6px}
+.usr-chip{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);padding:4px 10px 4px 5px;border-radius:20px;cursor:pointer;font-size:12px;color:rgba(255,255,255,.88);transition:all .18s}
+.usr-chip:hover{background:rgba(255,255,255,.16)}
+.uca{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--white)}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,var(--primary) 0%,var(--primary-l) 55%,var(--primary-xl) 100%);color:var(--white);padding:28px 16px 24px;border-bottom:3px solid var(--yellow)}
+.hero-in{max-width:880px;margin:0 auto}
+.hero h1{font-size:clamp(20px,4vw,30px);font-weight:800;line-height:1.22;margin-bottom:7px;letter-spacing:-.4px}
+.hero h1 em{font-style:normal;color:var(--cyan-l)}
+.hero p{font-size:13px;color:rgba(255,255,255,.72);line-height:1.6;max-width:480px;margin-bottom:18px}
+.stats{display:flex;gap:7px;flex-wrap:wrap}
+.stat{background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.14);border-radius:8px;padding:8px 13px;flex:1;min-width:72px}
+.sn{font-size:16px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--yellow-l)}
+.sl{font-size:10px;color:rgba(255,255,255,.58);margin-top:1px}
+
+/* MAIN */
+.main{max-width:880px;margin:0 auto;padding:18px 16px 140px}
+.sec-lbl{font-size:10px;font-weight:700;color:var(--text-m);letter-spacing:.9px;text-transform:uppercase;margin-bottom:8px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px}
+.chip{background:var(--white);border:1.5px solid var(--border);color:var(--text-m);font-size:12px;font-weight:500;padding:6px 12px;border-radius:20px;cursor:pointer;transition:all .16s;white-space:nowrap;box-shadow:0 1px 3px rgba(0,56,101,.06)}
+.chip:hover{border-color:var(--cyan);color:var(--primary);background:rgba(0,153,204,.05);transform:translateY(-1px)}
+
+/* CONV */
+#conv{display:flex;flex-direction:column;gap:14px}
+.mu{align-self:flex-end;max-width:80%;background:var(--primary);color:var(--white);border-radius:18px 18px 4px 18px;padding:11px 15px;font-size:14px;line-height:1.65;box-shadow:var(--sh)}
+.ma{align-self:flex-start;width:100%}
+.ma-hdr{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.ma-av{width:27px;height:27px;border-radius:8px;background:linear-gradient(135deg,var(--cyan),var(--primary-l));display:flex;align-items:center;justify-content:center;font-size:14px}
+.ma-nm{font-size:11px;font-weight:600;color:var(--text-m)}
+.ma-body{background:var(--white);border:1px solid var(--border);border-radius:4px 14px 14px 14px;padding:14px 16px;font-size:14px;line-height:1.78;box-shadow:var(--sh)}
+.ma-body strong{color:var(--primary);font-weight:600}
+.ma-body h3{font-size:11px;color:var(--text-m);margin:12px 0 4px;letter-spacing:.6px;font-weight:700;text-transform:uppercase}
+
+/* ANMÄRKNING */
+.niva{display:inline-flex;align-items:center;gap:4px;padding:5px 11px;border-radius:6px;font-size:11px;font-weight:700;letter-spacing:.4px;margin-bottom:11px}
+.nA1{background:rgba(220,38,38,.09);border:1.5px solid var(--A1);color:var(--A1)}
+.nA2{background:rgba(234,88,12,.09);border:1.5px solid var(--A2);color:var(--A2)}
+.nB{background:rgba(180,83,9,.09);border:1.5px solid var(--B);color:var(--B)}
+.nC{background:rgba(22,163,74,.09);border:1.5px solid var(--C);color:var(--C)}
+
+/* KÄLLSEKTION */
+.src-wrap{margin-top:12px;padding-top:10px;border-top:1px solid var(--border)}
+.src-blk{margin-bottom:10px}
+.src-blk-hdr{font-size:10px;font-weight:700;color:var(--text-m);letter-spacing:.7px;text-transform:uppercase;margin-bottom:5px}
+.src-tags{display:flex;flex-wrap:wrap;gap:4px}
+.src-tag{font-size:10px;padding:2px 7px;border-radius:4px;font-family:'JetBrains Mono',monospace}
+.src-lag{background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.2);color:#b91c1c}
+.src-fs{background:rgba(234,88,12,.08);border:1px solid rgba(234,88,12,.2);color:#c2410c}
+.src-std{background:rgba(0,79,140,.08);border:1px solid rgba(0,79,140,.2);color:var(--primary-l)}
+.src-hb{background:rgba(22,163,74,.08);border:1px solid rgba(22,163,74,.2);color:#15803d}
+.src-qa{background:rgba(107,33,168,.08);border:1px solid rgba(107,33,168,.2);color:#7e22ce}
+.src-bi{background:rgba(15,118,110,.08);border:1px solid rgba(15,118,110,.2);color:#0f766e}
+
+/* LOADING */
+.dots span{display:inline-block;width:6px;height:6px;background:var(--cyan);border-radius:50%;margin:0 2px;animation:d 1.2s infinite}
+.dots span:nth-child(2){animation-delay:.2s}.dots span:nth-child(3){animation-delay:.4s}
+@keyframes d{0%,60%,100%{transform:translateY(0);opacity:.35}30%{transform:translateY(-6px);opacity:1}}
+.loading-status{font-size:11px;color:var(--text-m);margin-top:6px;font-style:italic}
+
+/* WELCOME */
+.wlc{text-align:center;padding:44px 0 16px}
+.wlc-ic{font-size:46px;margin-bottom:10px}
+.wlc h2{font-size:17px;font-weight:700;color:var(--primary);margin-bottom:7px}
+.wlc p{font-size:13px;color:var(--text-m);max-width:360px;margin:0 auto;line-height:1.6}
+
+/* INPUT */
+.inp-wrap{position:fixed;bottom:0;left:0;right:0;z-index:50;background:linear-gradient(to top,var(--bg) 72%,transparent);padding:12px 16px 16px}
+.inp-in{max-width:880px;margin:0 auto}
+.inp-box{background:var(--white);border:2px solid var(--border);border-radius:14px;padding:9px 9px 9px 15px;display:flex;gap:8px;align-items:flex-end;box-shadow:var(--sh-lg);transition:border-color .18s}
+.inp-box:focus-within{border-color:var(--cyan)}
+.inp-box textarea{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-family:'Inter',sans-serif;font-size:14px;line-height:1.5;resize:none;max-height:100px;min-height:22px}
+.inp-box textarea::placeholder{color:var(--text-m)}
+.yr{background:var(--bg);border:1.5px solid var(--border);color:var(--text-m);font-family:'JetBrains Mono',monospace;font-size:12px;padding:7px 8px;border-radius:8px;width:62px;outline:none;transition:all .18s;-moz-appearance:textfield}
+.yr::-webkit-inner-spin-button,.yr::-webkit-outer-spin-button{-webkit-appearance:none}
+.yr:focus{border-color:var(--cyan);color:var(--text)}
+.snd{width:38px;height:38px;border-radius:9px;background:linear-gradient(135deg,var(--cyan),var(--primary-l));border:none;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--white);font-weight:700;transition:all .18s;box-shadow:0 3px 10px rgba(0,79,140,.28)}
+.snd:hover{transform:scale(1.06)}.snd:disabled{opacity:.4;cursor:not-allowed;transform:none}
+
+/* FEEDBACK */
+#fbO{display:none;position:fixed;inset:0;background:rgba(0,0,0,.48);z-index:300;align-items:center;justify-content:center}
+#fbO.open{display:flex}
+.fb-box{background:var(--white);border-radius:18px;padding:26px;width:100%;max-width:420px;margin:16px;box-shadow:0 20px 60px rgba(0,0,0,.24)}
+.fb-hdr{display:flex;align-items:center;gap:9px;margin-bottom:16px}
+.fb-hdr h3{font-size:16px;font-weight:700;color:var(--primary)}
+.fb-close{margin-left:auto;background:none;border:none;color:var(--text-m);font-size:22px;cursor:pointer;line-height:1;padding:0 4px}
+.fb-types{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.fbt{padding:10px 8px;border:2px solid var(--border);border-radius:9px;background:var(--bg);cursor:pointer;text-align:center;font-size:12px;font-weight:500;color:var(--text-m);transition:all .16s}
+.fbt:hover,.fbt.on{border-color:var(--cyan);background:rgba(0,153,204,.07);color:var(--primary)}
+.fbt .fi{font-size:20px;margin-bottom:3px;display:block}
+.fb-ta{width:100%;padding:10px 12px;border:2px solid var(--border);border-radius:9px;font-family:'Inter',sans-serif;font-size:13px;outline:none;resize:vertical;min-height:88px;color:var(--text);margin-bottom:12px;transition:border-color .18s}
+.fb-ta:focus{border-color:var(--cyan)}
+.fb-snd{width:100%;padding:12px;background:linear-gradient(135deg,var(--cyan),var(--primary-l));color:var(--white);border:none;border-radius:9px;font-size:14px;font-weight:700;cursor:pointer;transition:all .18s}
+.fb-snd:hover{transform:translateY(-1px)}
+.fb-ok{text-align:center;padding:20px 0;display:none}
+.fb-ok .ok-ic{font-size:38px;margin-bottom:8px}
+.fb-ok p{color:var(--text-m);font-size:14px;line-height:1.5}
+
+/* FAB */
+.fab{position:fixed;bottom:84px;right:16px;z-index:49;width:44px;height:44px;border-radius:50%;background:var(--yellow);color:var(--primary);border:none;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(245,166,35,.40);transition:all .18s}
+.fab:hover{transform:scale(1.1)}
+
+.fi{animation:fi .25s ease}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media(max-width:580px){.hero{padding:20px 16px 18px}.main{padding:14px 16px 140px}.mu{max-width:92%}.yr{width:55px}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="ls">
+  <div class="lb">
+    <div class="ll"><div class="ll-bolt">⚡</div><div class="ll-txt">Elregel<span>AI</span></div></div>
+    <p class="ls-sub">Välj användare och ange PIN</p>
+    <div class="user-grid">
+      <div class="ub" onclick="selU('mikael')" id="ub-mikael">
+        <div class="ua" style="background:linear-gradient(135deg,#004f8c,#003865)">M</div>
+        <div><div class="ui-name">Mikael</div></div>
+      </div>
+      <div class="ub" onclick="selU('robin')" id="ub-robin">
+        <div class="ua" style="background:linear-gradient(135deg,#0099cc,#004f8c)">R</div>
+        <div><div class="ui-name">Robin</div></div>
+      </div>
+    </div>
+    <label class="pin-lbl">🔑 PIN-kod</label>
+    <input type="text" class="pin" id="pin" placeholder="••••••••••" maxlength="10" inputmode="numeric" autocomplete="off" autocorrect="off" spellcheck="false" oninput="this.value=this.value.replace(/[^0-9]/g,'')" onkeydown="if(event.key==='Enter')login()">
+    <button class="lgn-btn" onclick="login()">Logga in →</button>
+    <div class="lgn-err" id="lerr"></div>
+  </div>
+</div>
+
+<!-- APP -->
+<header>
+  <div class="hdr">
+    <a class="logo" href="#"><div class="logo-b">⚡</div><div class="logo-t">Elregel<span>AI</span></div></a>
+    <span class="beta">BETA</span>
+    <div class="hdr-r">
+      <div class="usr-chip" id="uchip" onclick="logout()">
+        <div class="uca" id="ucav" style="background:linear-gradient(135deg,#004f8c,#003865)">M</div>
+        <span id="ucnm">Mikael</span>
+        <span style="opacity:.5;font-size:10px">↩</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="hero-in">
+    <h1>Fråga <em>elregelverket</em><br>— svar med källhänvisning</h1>
+    <p>Söker i hela regelverket: föreskrifter, lagar, standarder, handböcker och besiktningsprotokoll. Svarar alltid med rätt källa och lagstiftningshierarki.</p>
+    <div class="stats">
+      <div class="stat"><div class="sn">4 082</div><div class="sl">Poster totalt</div></div>
+      <div class="stat"><div class="sn">949</div><div class="sl">Besiktningar</div></div>
+      <div class="stat"><div class="sn">771</div><div class="sl">Föreskrifter</div></div>
+      <div class="stat"><div class="sn">430</div><div class="sl">Standarder</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="sec-lbl">Snabbfrågor</div>
+  <div class="chips">
+    <span class="chip" onclick="ask('Är elbilsladdbox utan JFB typ B en anmärkning?',2022)">⚡ Elbil JFB typ B</span>
+    <span class="chip" onclick="ask('Behöver eluttag utomhus jordfelsbrytare?',1985)">🔌 JFB utomhus 1985</span>
+    <span class="chip" onclick="ask('Är delbar nollplint med PEN-ledare en brist?',null)">⚠️ PEN-ledare</span>
+    <span class="chip" onclick="ask('Vad gäller vid väsentlig ändring av elanläggning?',null)">📋 Väsentlig ändring</span>
+    <span class="chip" onclick="ask('Propphuv saknas på säkringshållare – vilken anmärkning?',null)">🔴 Propphuv saknas</span>
+    <span class="chip" onclick="ask('Ska nödljus alltid lysa när verksamhet pågår?',null)">💡 Nödljus krav</span>
+    <span class="chip" onclick="ask('Är ojordade uttag i lägenhet från 1965 en brist?',1965)">🏠 Ojordade uttag 1965</span>
+    <span class="chip" onclick="ask('FK i gamla SP-rör – vad säger Elsäkerhetsverket?',null)">🔧 FK i SP-rör</span>
+    <span class="chip" onclick="ask('Vilken JFB-typ krävs för elbilsladdning typ 2?',2023)">🚗 Laddbox JFB-typ</span>
+    <span class="chip" onclick="ask('Krav på jordfelsbrytare i badrum enligt SS 436 40 00?',null)">🛁 Badrum JFB</span>
+  </div>
+  <div id="conv">
+    <div class="wlc">
+      <div class="wlc-ic">⚡</div>
+      <h2>Välkommen till ElregelAI</h2>
+      <p>Söker i hela regelverket — lagar, föreskrifter, standarder och handböcker — med besiktningserfarenhet som stöd.</p>
+    </div>
+  </div>
+</div>
+
+<button class="fab" onclick="openFb()" title="Rapportera problem / bugg">💬</button>
+
+<div class="inp-wrap">
+  <div class="inp-in">
+    <div class="inp-box">
+      <textarea id="fq" rows="1" placeholder="Skriv en fråga om elregelverket..." onkeydown="hk(event)" oninput="arz(this)"></textarea>
+      <input type="number" class="yr" id="yr" placeholder="År" min="1880" max="2026" title="Installationsår (valfritt)">
+      <button class="snd" id="sb" onclick="go()">↑</button>
+    </div>
+  </div>
+</div>
+
+<!-- FEEDBACK -->
+<div id="fbO">
+  <div class="fb-box">
+    <div class="fb-hdr"><span style="font-size:22px">💬</span><h3>Rapportera problem</h3><button class="fb-close" onclick="closeFb()">×</button></div>
+    <div id="fb-form">
+      <div class="fb-types">
+        <div class="fbt" onclick="selT(this,'🐛 Bugg')"><span class="fi">🐛</span>Bugg</div>
+        <div class="fbt" onclick="selT(this,'❓ Fel svar')"><span class="fi">❓</span>Fel svar</div>
+        <div class="fbt" onclick="selT(this,'💡 Förbättring')"><span class="fi">💡</span>Förbättring</div>
+        <div class="fbt" onclick="selT(this,'📝 Saknar info')"><span class="fi">📝</span>Saknar info</div>
+      </div>
+      <textarea class="fb-ta" id="fb-txt" placeholder="Beskriv problemet, vad du frågade och vad du förväntade dig..."></textarea>
+      <button class="fb-snd" onclick="sendFb()">Skicka rapport →</button>
+    </div>
+    <div class="fb-ok" id="fb-ok"><div class="ok-ic">✅</div><p>Tack! Din rapport är sparad.<br>Mikael och Robin granskar den.</p></div>
+  </div>
+</div>
+
+<script>
+const SB  = 'https://rnnjnnulqdgbwghaxbdg.supabase.co';
+const SBK = 'sb_publishable_XDrJVmDDC9g4rxTDYJABHA_lWV0q02D';
+const OAK = 'OPENAI_KEY_REMOVED';
+const CLK = 'ANTHROPIC_KEY_REMOVED';
+
+const USERS = {
+  mikael:{name:'Mikael',pin:'0739150416',short:'Mikael',grad:'linear-gradient(135deg,#004f8c,#003865)',ltr:'M'},
+  robin:{name:'Robin',pin:'0704170729',short:'Robin',grad:'linear-gradient(135deg,#0099cc,#004f8c)',ltr:'R'}
+};
+let cu=null,busy=false,fbTyp='';
+
+// LOGIN
+function selU(id){cu=id;document.querySelectorAll('.ub').forEach(e=>e.classList.remove('sel'));document.getElementById('ub-'+id).classList.add('sel');document.getElementById('pin').focus();}
+function login(){
+  console.log('Login anropad, cu='+cu);
+  const raw=document.getElementById('pin').value;
+  const p=raw.replace(/[^0-9]/g,'').trim();
+  // Uppdatera fältet med rensat värde
+  document.getElementById('pin').value=p;
+  const e=document.getElementById('lerr');
+  if(!cu){e.textContent='Välj en användare';return;}if(p!==USERS[cu].pin){e.textContent='❌ Fel PIN-kod';return;}const u=USERS[cu];document.getElementById('ls').style.display='none';document.getElementById('ucav').style.background=u.grad;document.getElementById('ucav').textContent=u.ltr;document.getElementById('ucnm').textContent=u.short;}
+function logout(){if(!confirm('Logga ut?'))return;document.getElementById('ls').style.display='flex';document.getElementById('pin').value='';document.getElementById('lerr').textContent='';cu=null;document.querySelectorAll('.ub').forEach(e=>e.classList.remove('sel'));}
+
+// FEEDBACK
+function openFb(){document.getElementById('fbO').classList.add('open');fbTyp='';document.getElementById('fb-txt').value='';document.getElementById('fb-ok').style.display='none';document.getElementById('fb-form').style.display='block';}
+function closeFb(){document.getElementById('fbO').classList.remove('open');}
+function selT(el,t){document.querySelectorAll('.fbt').forEach(e=>e.classList.remove('on'));el.classList.add('on');fbTyp=t;}
+async function sendFb(){const txt=document.getElementById('fb-txt').value.trim();if(!txt){alert('Beskriv problemet');return;}try{await fetch(`${SB}/rest/v1/fraga_svar`,{method:'POST',headers:{'Content-Type':'application/json','apikey':SBK,'Authorization':`Bearer ${SBK}`,'Prefer':'return=minimal'},body:JSON.stringify({fraga:fbTyp||'Feedback',svar:txt,kalla:'Feedback:'+cu,kategori:'feedback',installations_ar:null,granskad_av:'pending'})});}catch(e){}document.getElementById('fb-form').style.display='none';document.getElementById('fb-ok').style.display='block';setTimeout(closeFb,2800);}
+
+// CHAT
+function arz(t){t.style.height='auto';t.style.height=Math.min(t.scrollHeight,100)+'px';}
+function hk(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();go();}}
+function ask(q,y){document.getElementById('fq').value=q;document.getElementById('yr').value=y||'';go();}
+
+function det(t){
+  if(/\bA1\b.*anmärk|omedelbar fara|tas ur drift|spänningssatt.*tillgänglig/i.test(t))return'A1';
+  if(/\bA2\b.*anmärk/i.test(t))return'A2';
+  if(/\bB\b.*anmärk|\bBRIST\b/i.test(t))return'B';
+  if(/EJ BRIST|ej.*anmärk|\bC\b.*anmärk|upplysning|inte.*brist/i.test(t))return'C';
+  return null;
+}
+function badge(n){if(!n)return'';const l={A1:'🔴 A1 — Omedelbar fara',A2:'🟠 A2 — Anmärkning',B:'🟡 B — Brist',C:'🟢 Ej brist / Upplysning'};return`<div class="niva n${n}">${l[n]}</div>`;}
+function fmt(t){return t.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/^#{1,3} (.+)$/gm,'<h3>$1</h3>').replace(/\n/g,'<br>');}
+
+// Klassificera källa för rätt tag-stil
+function klassificeraKalla(kalla, lager) {
+  if(lager==='lag')return['src-lag','LAG'];
+  if(lager==='foreskrift')return['src-fs','FÖRESKRIFT'];
+  if(lager==='standard')return['src-std','STANDARD'];
+  if(lager==='handbok')return['src-hb','HANDBOK'];
+  if(lager==='qa'&&kalla.includes('Elsäkerhetsverket'))return['src-fs','ESV Q&A'];
+  if(lager==='qa')return['src-qa','Q&A'];
+  if(lager==='besiktning'||lager==='expert')return['src-bi','BESIKTNING'];
+  return['src-std',lager.toUpperCase()];
+}
+
+function byggKallHtml(regler) {
+  // Gruppera per lager
+  const grupper = {lag:[],foreskrift:[],standard:[],handbok:[],qa:[],besiktning:[]};
+  regler.forEach(r=>{
+    const lager = r.lager in grupper ? r.lager : 'besiktning';
+    if(!grupper[lager].find(x=>x.kalla===r.kalla)) grupper[lager].push(r);
+  });
+  
+  const etiketter = {
+    lag:'Lag (tvingande)',
+    foreskrift:'Föreskrifter (tvingande)',
+    standard:'Standard (normativ)',
+    handbok:'Handbok (rådgivande)',
+    qa:'Frågor & Svar',
+    besiktning:'Besiktningserfarenhet (stöd)'
+  };
+  
+  let html = '<div class="src-wrap">';
+  for(const [lager, poster] of Object.entries(grupper)) {
+    if(!poster.length) continue;
+    const [cls] = klassificeraKalla('', lager);
+    html += `<div class="src-blk"><div class="src-blk-hdr">${etiketter[lager]}</div><div class="src-tags">`;
+    poster.slice(0,4).forEach(r=>{
+      const k = r.kalla.length>46 ? r.kalla.slice(0,46)+'…' : r.kalla;
+      html += `<span class="src-tag ${cls}">${k}</span>`;
+    });
+    html += '</div></div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+// DUBBEL SÖKNING: Regelverket + Q&A/Besiktning separat
+async function sokRegelverk(emb, yr) {
+  // Sökning 1: Hela regelverket (alla lager, hög match_count)
+  const p1 = {fraga_embedding: emb, match_count: 12};
+  if(yr) p1.installations_ar = yr;
+  
+  const r1 = await fetch(`${SB}/rest/v1/rpc/sok_regler`, {
+    method:'POST',
+    headers:{'Content-Type':'application/json','apikey':SBK,'Authorization':`Bearer ${SBK}`},
+    body: JSON.stringify(p1)
+  });
+  const alla = await r1.json();
+  
+  // Säkerställ array och sortera efter regelverkshierarki
+  const sorted = Array.isArray(alla) ? alla : (alla?.data ? alla.data : []);
+  const prioritet = {lag:1, foreskrift:2, standard:3, handbok:4, expert:5, qa:6, besiktning:7};
+  sorted.sort((a,b) => {
+    const pa = prioritet[a.lager] || 8;
+    const pb = prioritet[b.lager] || 8;
+    if(pa !== pb) return pa - pb;
+    return (b.likhet||0) - (a.likhet||0);
+  });
+  
+  const regelTunga = sorted.filter(r=>['lag','foreskrift','standard','handbok'].includes(r.lager));
+  const ovriga = sorted.filter(r=>!['lag','foreskrift','standard','handbok'].includes(r.lager));
+  
+  // Ta de 5 bästa regelverkposterna + 3 Q&A/besiktning som stöd
+  const final = [...regelTunga.slice(0,6), ...ovriga.slice(0,3)];
+  return final;
+}
+
+async function go(){
+  if(busy)return;
+  const q=document.getElementById('fq').value.trim();
+  const yr=parseInt(document.getElementById('yr').value)||null;
+  if(!q)return;
+  busy=true;document.getElementById('sb').disabled=true;
+  document.getElementById('fq').value='';document.getElementById('fq').style.height='auto';
+  const wlc=document.querySelector('.wlc');if(wlc)wlc.remove();
+  const cv=document.getElementById('conv');
+
+  const ud=document.createElement('div');ud.className='mu fi';
+  ud.innerHTML=q+(yr?` <span style="opacity:.65;font-size:11px">(${yr})</span>`:'');
+  cv.appendChild(ud);
+
+  const ld=document.createElement('div');ld.className='ma fi';
+  ld.innerHTML=`<div class="ma-hdr"><div class="ma-av">⚡</div><div class="ma-nm">ElregelAI</div></div>
+    <div class="ma-body">
+      <div class="dots"><span></span><span></span><span></span></div>
+      <div class="loading-status" id="ls-txt">Söker i regelverket...</div>
+    </div>`;
+  cv.appendChild(ld);
+  window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'});
+
+  try{
+    // 1. Embedding
+    const er=await fetch('https://api.openai.com/v1/embeddings',{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${OAK}`},body:JSON.stringify({model:'text-embedding-3-small',input:q})});
+    const emb=(await er.json()).data[0].embedding;
+
+    // 2. Smart sökning med prioritering
+    const lstxt = document.getElementById('ls-txt');
+    if(lstxt) lstxt.textContent='Söker i lagar, föreskrifter och standarder...';
+    const regler = await sokRegelverk(emb, yr);
+    
+    if(lstxt) lstxt.textContent='Formulerar svar med källhänvisning...';
+
+    // 3. Bygg kontextblock med tydlig hierarki
+    const regelTunga = regler.filter(r=>['lag','foreskrift','standard','handbok'].includes(r.lager));
+    const stod = regler.filter(r=>!['lag','foreskrift','standard','handbok'].includes(r.lager));
+    
+    const ctx = `=== TVINGANDE REGELVERK (LAG, FÖRESKRIFT, STANDARD) ===\n` +
+      regelTunga.map(r=>`[${r.lager.toUpperCase()} | ${r.kalla}]\n${r.innehall}`).join('\n\n---\n\n') +
+      (stod.length ? `\n\n=== STÖD: BESIKTNINGSERFARENHET & Q&A ===\n` +
+      stod.map(r=>`[${r.lager.toUpperCase()} | ${r.kalla}]\n${r.innehall}`).join('\n\n---\n\n') : '');
+
+    // 3b. Förbättra frågan med kontextmedvetenhet
+    const fragor_expansion = q.length < 30 ? 
+      `${q} krav regler installation elbesiktning anmärkning SS 436 40 00 ELSÄK-FS` : q;
+    
+    // 4. Claude med korrekt hierarki-prompt
+    const cr=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':CLK,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        system:`Du är expert på svenska elregelverket och besiktning av elanläggningar. Du har djup kunskap om ALLA utgåvor av SS 436 40 00 och hur kraven förändrats mellan utgåvorna.
+
+KÄLLHIERARKI — följ alltid denna ordning:
+1. LAG (Elsäkerhetslagen, AML, PBL) — tvingande, överordnar allt
+2. FÖRESKRIFT (ELSÄK-FS, AFS, BFS) — tvingande, exakta krav
+3. STANDARD normativ (SS 436 40 00, SS-EN) — krav vid hänvisning i föreskrift
+4. HANDBOK (SEK HB) — rådgivande, inte tvingande
+5. BESIKTNINGSERFARENHET & Q&A — stöd, INTE primär källa
+
+FRÅGEFÖRBÄTTRING — viktigt:
+Om frågan är oklar eller ofullständig, tolka den och ange hur du tolkat den.
+Exempel: "Kan man förlägg rör där?" → Tolka som fråga om kabelförläggning i rör och ge svar baserat på SS 436 40 00 avsnitt 522 med specifika krav (stödavstånd, krökar, material etc).
+
+STRÄNGASTE TOLKNING — alltid:
+Vid oklara fall VÄLJ ALLTID den tolkning som ger STARKAST SKYDD för personsäkerheten.
+Om regelverket säger "bör" och det gäller säkerhet — behandla det som "ska".
+Om det FINNS en möjlighet att utföra något (t.ex. kabel i rör) — ange ALLTID de konkreta minimikraven som måste uppfyllas (t.ex. stödavstånd max 800 mm för horisontell förläggning, krökar minst 6× rörets ytterdiameter, skyddsklass etc).
+Skriv aldrig bara "det kan gå" — specificera ALLTID VAD som krävs för att det ska gå.
+
+REGELVERKSKÄNNEDOM — SS 436 40 00 utgåvor:
+- Utg 1/SEK 1978-1993: Ojordade uttag tillåtna, äldre krav
+- SEK 1994 (del 100): Krav på skyddsjordade uttag i NYA installationer fr.o.m. 1994
+- SEK 2001 (del 400): Uppdaterade krav, utökade JFB-krav
+- Utg 4/SEK 2017→2023 (nuvarande): Senaste krav inkl. laddplatser, typ B/A+ JFB
+
+VIKTIGA MILSTOLPAR (när krav tillkom):
+- 1994: Krav på 3-poliga (skyddsjordade) uttag i nya installationer
+- 1995: JFB 30 mA krav på uttag utomhus och badrum (nya inst.)
+- 2009: Petskydd obligatoriskt på nya uttag
+- 2012: JFB krav på alla uttag i bostäder (ELSÄK-FS 2008:2)
+- 2023: DC-kapabel JFB (typ B/A+) krav för laddplatser
+
+BEGREPPSÄNDRINGAR ÖVER TID:
+- "Huvudbrytare" → kan mena lastfrånskiljare (äldre term) ELLER huvudkopplare (nyare) — FRÅGA vid oklart
+- "Jordfelsbrytare" → typ AC (äldst), typ A (standard), typ B/A+ (laddplatser) — FRÅGA vilken typ
+- "Skyddsledare/PE" → äldre: "jordledare", ännu äldre: saknas (ojordat system)
+- "Gruppcentral" → äldre: "säkringstavla", "automatsäkringstavla"
+
+REGLER FÖR SVAR:
+- Svara ALLTID på svenska
+- OM INGET ÅR ANGES: Svara utifrån NUVARANDE regler men ange ALLTID vilket år kravet trädde ikraft och vilken utgåva. Fråga om installationsår om det är avgörande för bedömningen.
+- OM ÅR ANGES: underhåll = DÅ gällande regler (ange utgåva), väsentlig ändring = NU gällande
+- OKLARA BEGREPP (t.ex. "huvudbrytare", "jordfelsbrytare"): Fråga direkt — "Menar du X eller Y?" — och svara på BÅDA alternativen
+- Hänvisa alltid till SPECIFIK del+utgåva: "SS 436 40 00 utg. 4 avsnitt 411.3" eller "ELSÄK-FS 2022:1 §4"
+- Elsäkerhetsverkets Q&A är officiella svar — hänvisa när de finns
+- Börja alltid med bedömning A1/A2/B/EJ BRIST om besiktningsfråga
+- Ge ALLTID konkreta värden, mått och tidsperioder
+- Strängaste tolkning — vid oklara fall: ange exakta krav som måste uppfyllas
+- Max 500 ord
+
+FORMAT:
+**Bedömning:** [A1/A2/B/EJ BRIST] (om besiktningsfråga)
+**Gäller från:** [År + utgåva/föreskrift som introduced kravet]
+**Regelgrund:** [Paragraf + exakt krav]
+**Konkreta krav:** [Mått, avstånd, specifikationer]
+**Tidigare regler:** [Vad gällde innan, om relevant för frågan]nd, specifikationer]
+**Stöd:** [Besiktningserfarenhet om relevant]`,
+        messages:[{
+          role:'user',
+          content:`Installationsår: ${yr||'ej angivet'}\n\nFråga: ${q}\n\n${ctx}`
+        }]
+      })
+    });
+    const cd=await cr.json();
+    if(cd.error)throw new Error(cd.error.message);
+    const sv=cd.content[0].text;
+    const nv=det(sv);
+
+    ld.innerHTML=`
+      <div class="ma-hdr">
+        <div class="ma-av">⚡</div>
+        <div class="ma-nm">ElregelAI${yr?` <span style="color:#8090a8;font-size:10px"> — Inst.år ${yr}</span>`:''}</div>
+      </div>
+      <div class="ma-body fi">
+        ${badge(nv)}
+        ${fmt(sv)}
+        ${byggKallHtml(regler)}
+      </div>`;
+
+  }catch(err){
+    ld.querySelector('.ma-body').innerHTML=`<span style="color:#dc2626">❌ Fel: ${err.message}</span>`;
+  }
+
+  busy=false;document.getElementById('sb').disabled=false;
+  window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'});
+  document.getElementById('fq').focus();
+}
+</script>
+</body>
+</html>
