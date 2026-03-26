@@ -171,6 +171,10 @@ header{position:sticky;top:0;z-index:100;background:var(--primary);box-shadow:0 
         <div class="ua" style="background:linear-gradient(135deg,#0099cc,#004f8c)">R</div>
         <div><div class="ui-name">Robin</div></div>
       </div>
+      <div class="ub" onclick="selU('daniel')" id="ub-daniel">
+        <div class="ua" style="background:linear-gradient(135deg,#006633,#004422)">D</div>
+        <div><div class="ui-name">Daniel</div></div>
+      </div>
     </div>
     <label class="pin-lbl">🔑 PIN-kod</label>
     <input type="text" class="pin" id="pin" placeholder="••••••••••" maxlength="10" inputmode="numeric" autocomplete="off" autocorrect="off" spellcheck="false" oninput="this.value=this.value.replace(/[^0-9]/g,'')" onkeydown="if(event.key==='Enter')login()">
@@ -279,7 +283,8 @@ let CLK = '';
 
 const USERS = {
   mikael:{name:'Mikael',pin:'0739150416',short:'Mikael',grad:'linear-gradient(135deg,#004f8c,#003865)',ltr:'M'},
-  robin:{name:'Robin',pin:'0704170729',short:'Robin',grad:'linear-gradient(135deg,#0099cc,#004f8c)',ltr:'R'}
+  robin:{name:'Robin',pin:'0704170729',short:'Robin',grad:'linear-gradient(135deg,#0099cc,#004f8c)',ltr:'R'},
+  daniel:{name:'Daniel',pin:'0733962168',short:'Daniel',grad:'linear-gradient(135deg,#006633,#004422)',ltr:'D'}
 };
 let cu=null,busy=false,fbTyp='';
 
